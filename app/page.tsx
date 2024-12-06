@@ -37,16 +37,12 @@ export default function Home() {
         <GameSection 
           title="Cracked Games"
           filterFn={(game) => game.crackStatus === 'Cracked'}
-          games={games}
-          isLoading={isLoading}
         />
 
         {/* Uncracked Games */}
         <GameSection 
           title="Uncracked Games"
           filterFn={(game) => game.crackStatus === 'Not Cracked'}
-          games={games}
-          isLoading={isLoading}
         />
 
         {/* Upcoming Games */}
@@ -57,8 +53,6 @@ export default function Home() {
             const today = new Date()
             return releaseDate > today
           }}
-          games={games}
-          isLoading={isLoading}
         />
 
         {/* All Games */}
