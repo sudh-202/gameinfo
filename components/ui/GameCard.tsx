@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { Game } from '@/lib/store'
+import { Game } from '@/types/game'
 import { format, isValid, parseISO } from 'date-fns'
 import clsx from 'clsx'
 
@@ -26,7 +26,7 @@ export function GameCard({ game, size = 'normal', featured = false }: GameCardPr
     ? (() => {
         try {
           const date = parseISO(game.releaseDate)
-          return isValid(date) ? format(date, 'yyyy-MM-dd') : 'TBA'
+          return isValid(date) ? format(date, 'MMM d, yyyy') : 'TBA'
         } catch {
           return 'TBA'
         }
@@ -44,12 +44,6 @@ export function GameCard({ game, size = 'normal', featured = false }: GameCardPr
         }
       )}
     >
-      {featured && (
-        <div className="absolute right-2 top-2 z-10 rounded bg-blue-500 px-2 py-1 text-xs font-bold text-white">
-          AAA GAME
-        </div>
-      )}
-      
       {/* Image Container */}
       <div className={clsx(
         'relative',
@@ -88,26 +82,20 @@ export function GameCard({ game, size = 'normal', featured = false }: GameCardPr
             className={clsx(
               'inline-block rounded px-3 py-1 font-medium',
               size === 'large' ? 'text-base' : 'text-sm',
-              game.crackStatus === 'Cracked'
-                ? 'bg-green-500/20 text-green-400'
-                : 'bg-red-500/20 text-red-400'
+              {
+                'bg-green-500/20 text-green-400': game.crackStatus === 'Cracked',
+                'bg-yellow-500/20 text-yellow-400': game.crackStatus === 'Upcoming',
+                'bg-red-500/20 text-red-400': game.crackStatus === 'Not Cracked'
+              }
             )}
           >
-            {game.crackStatus || 'Unknown'}
+            {game.crackStatus}
           </span>
-          {game.crackStatus !== 'Cracked' && (
-            <span className={clsx(
-              'ml-2 text-gray-400',
-              size === 'large' ? 'text-base' : 'text-sm'
-            )}>
-              {game.crackStatus === 'Not Cracked' ? '1 day(s)' : ''}
-            </span>
-          )}
         </div>
 
         {/* Platforms */}
         <div className="mb-3 flex flex-wrap gap-2">
-          {(game.platform || []).slice(0, size === 'large' ? 5 : 3).map((platform) => (
+          {game.platform.slice(0, size === 'large' ? 5 : 3).map((platform) => (
             <span
               key={platform}
               className={clsx(

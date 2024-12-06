@@ -13,6 +13,10 @@ const nextConfig = {
       },
     ],
   },
+  env: {
+    RAWG_API_KEY: process.env.RAWG_API_KEY,
+    NEXT_PUBLIC_RAWG_API_URL: process.env.NEXT_PUBLIC_RAWG_API_URL,
+  },
 }
 
 module.exports = nextConfig

@@ -1,94 +1,68 @@
 import { NextRequest, NextResponse } from 'next/server'
+import axios from 'axios'
 
-interface RAWGPlatform {
-  platform: {
-    name: string;
-  };
-}
-
-interface RAWGGenre {
-  name: string;
-}
+const RAWG_BASE_URL = 'https://api.rawg.io/api'
+const API_KEY = process.env.NEXT_PUBLIC_RAWG_API_KEY
 
 interface RAWGGame {
-  id: number;
-  name: string;
-  description_raw?: string;
-  platforms?: RAWGPlatform[];
-  released?: string;
-  background_image?: string;
-  clip?: {
-    clip?: string;
-  };
-  genres?: RAWGGenre[];
-  rating?: number;
-  metacritic?: number;
+  id: number
+  name: string
+  background_image: string
+  released: string
+  description?: string
+  genres?: { id: number; name: string }[]
+  platforms?: { platform: { id: number; name: string } }[]
+  metacritic?: number
 }
 
 interface RAWGResponse {
-  results: RAWGGame[];
-  count: number;
-  next: string | null;
-  previous: string | null;
+  results: RAWGGame[]
+  count: number
+  next: string | null
+  previous: string | null
 }
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const query = searchParams.get('search') || ''
-    const page = searchParams.get('page') || '1'
-    const pageSize = searchParams.get('page_size') || '20'
+    const endpoint = searchParams.get('endpoint') || 'games'
+    const gameId = searchParams.get('gameId')
 
-    const apiUrl = new URL(`${process.env.NEXT_PUBLIC_RAWG_API_URL}/games`)
-    apiUrl.searchParams.append('key', process.env.RAWG_API_KEY!)
-    apiUrl.searchParams.append('page_size', pageSize)
-    apiUrl.searchParams.append('page', page)
+    // Build the API URL
+    let url = `${RAWG_BASE_URL}/${endpoint}`
+    if (gameId) {
+      url += `/${gameId}`
+    }
+
+    // Add API key and other parameters
+    const params = new URLSearchParams()
+    params.append('key', API_KEY!)
     
-    if (query) {
-      apiUrl.searchParams.append('search', query)
-      apiUrl.searchParams.append('search_precise', 'true')
+    // Add additional search parameters based on the endpoint
+    switch (endpoint) {
+      case 'games':
+        const dates = searchParams.get('dates')
+        const ordering = searchParams.get('ordering')
+        const tags = searchParams.get('tags')
+        const search = searchParams.get('search')
+
+        if (dates) params.append('dates', dates)
+        if (ordering) params.append('ordering', ordering)
+        if (tags) params.append('tags', tags)
+        if (search) {
+          params.append('search', search)
+          params.append('search_precise', 'true')
+        }
+        break
     }
 
-    const response = await fetch(apiUrl.toString())
-
-    if (!response.ok) {
-      const error = await response.text()
-      console.error('RAWG API Error:', {
-        status: response.status,
-        statusText: response.statusText,
-        error
-      })
-      throw new Error(`RAWG API error: ${response.status} ${response.statusText}`)
-    }
-
-    const data = await response.json() as RAWGResponse
-
-    // Transform the data to match our app's format
-    const transformedGames = data.results.map((game: RAWGGame) => ({
-      id: game.id.toString(),
-      title: game.name,
-      description: game.description_raw || 'No description available',
-      price: 59.99, // Default price
-      platform: game.platforms?.map((p) => p.platform.name) || ['PC'],
-      releaseDate: game.released || 'TBA',
-      imageUrl: game.background_image || '/images/placeholder.jpg',
-      trailerUrl: game.clip?.clip || undefined,
-      crackStatus: Math.random() > 0.5 ? 'Cracked' : 'Not Cracked', // Simulated crack status
-      category: game.genres?.map((g) => g.name) || ['Action'],
-      rating: game.rating || null,
-      metacritic: game.metacritic || null,
-    }))
-
-    return NextResponse.json({
-      games: transformedGames,
-      count: data.count,
-      next: data.next,
-      previous: data.previous
-    })
+    const response = await axios.get(url, { params })
+    
+    return NextResponse.json(response.data)
   } catch (error) {
-    console.error('Games API error:', error)
+    console.error('RAWG API Error:', error)
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to fetch games' },
+      { error: 'Failed to fetch game data' },
       { status: 500 }
     )
   }
