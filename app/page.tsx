@@ -3,7 +3,6 @@
 import { useEffect } from 'react'
 import { useGameStore } from '@/lib/store'
 import { SearchBar } from '@/components/SearchBar'
-import { CategoryFilter } from '@/components/CategoryFilter'
 import { GameGrid } from '@/components/GameGrid'
 import GameCarousel from '@/components/ui/GameCarousel'
 

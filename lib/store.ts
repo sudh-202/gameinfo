@@ -35,8 +35,6 @@ interface GameStore {
   filterGames: () => void
 }
 
-const categories = ['All', 'Action', 'Adventure', 'RPG', 'Strategy', 'Sports', 'Racing', 'Simulation']
-
 export const useGameStore = create<GameStore>((set, get) => ({
   games: [],
   filteredGames: [],

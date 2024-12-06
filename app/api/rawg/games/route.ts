@@ -1,5 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+interface RAWGPlatform {
+  platform: {
+    name: string;
+  };
+}
+
+interface RAWGGenre {
+  name: string;
+}
+
+interface RAWGGame {
+  id: number;
+  name: string;
+  description_raw?: string;
+  platforms?: RAWGPlatform[];
+  released?: string;
+  background_image?: string;
+  clip?: {
+    clip?: string;
+  };
+  genres?: RAWGGenre[];
+  rating?: number;
+  metacritic?: number;
+}
+
+interface RAWGResponse {
+  results: RAWGGame[];
+  count: number;
+  next: string | null;
+  previous: string | null;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
@@ -29,20 +61,20 @@ export async function GET(request: NextRequest) {
       throw new Error(`RAWG API error: ${response.status} ${response.statusText}`)
     }
 
-    const data = await response.json()
+    const data = await response.json() as RAWGResponse
 
     // Transform the data to match our app's format
-    const transformedGames = data.results.map((game: any) => ({
+    const transformedGames = data.results.map((game: RAWGGame) => ({
       id: game.id.toString(),
       title: game.name,
       description: game.description_raw || 'No description available',
       price: 59.99, // Default price
-      platform: game.platforms?.map((p: any) => p.platform.name) || ['PC'],
+      platform: game.platforms?.map((p) => p.platform.name) || ['PC'],
       releaseDate: game.released || 'TBA',
       imageUrl: game.background_image || '/images/placeholder.jpg',
       trailerUrl: game.clip?.clip || undefined,
       crackStatus: Math.random() > 0.5 ? 'Cracked' : 'Not Cracked', // Simulated crack status
-      category: game.genres?.map((g: any) => g.name) || ['Action'],
+      category: game.genres?.map((g) => g.name) || ['Action'],
       rating: game.rating || null,
       metacritic: game.metacritic || null,
     }))
