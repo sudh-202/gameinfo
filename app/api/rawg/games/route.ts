@@ -4,16 +4,16 @@ import axios from 'axios'
 const RAWG_BASE_URL = 'https://api.rawg.io/api'
 const API_KEY = process.env.NEXT_PUBLIC_RAWG_API_KEY
 
-interface RAWGGame {
-  id: number
-  name: string
-  background_image: string
-  released: string
-  description?: string
-  genres?: { id: number; name: string }[]
-  platforms?: { platform: { id: number; name: string } }[]
-  metacritic?: number
-}
+// interface RAWGGame {
+//   id: number
+//   name: string
+//   background_image: string
+//   released: string
+//   description?: string
+//   genres?: { id: number; name: string }[]
+//   platforms?: { platform: { id: number; name: string } }[]
+//   metacritic?: number
+// }
 
 // interface RAWGResponse {
 //   results: RAWGGame[]

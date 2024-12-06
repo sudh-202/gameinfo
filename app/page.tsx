@@ -11,7 +11,7 @@ export default function Home() {
     fetchAllGames,
     // isLoading,
     error,
-    filteredGames,
+    // filteredGames,
     // searchTerm,
   } = useGameStore();
 

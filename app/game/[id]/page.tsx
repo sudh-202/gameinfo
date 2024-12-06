@@ -9,7 +9,7 @@ import { Game } from '@/lib/store'
 export default function GamePage({ params }: { params: { id: string } }) {
   const [game, setGame] = useState<Game | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [error, ] = useState<string | null>(null)
 
   useEffect(() => {
     const loadGame = async () => {
