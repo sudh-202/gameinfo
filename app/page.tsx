@@ -5,9 +5,10 @@ import { useGameStore } from '@/lib/store'
 import { SearchBar } from '@/components/SearchBar'
 import { CategoryFilter } from '@/components/CategoryFilter'
 import { GameGrid } from '@/components/GameGrid'
+import GameCarousel from '@/components/ui/GameCarousel'
 
 export default function Home() {
-  const { fetchGamesData, isLoading, error, games } = useGameStore()
+  const { fetchGamesData, isLoading, error, filteredGames } = useGameStore()
 
   useEffect(() => {
     fetchGamesData()
@@ -56,6 +57,48 @@ export default function Home() {
           )}
         </section>
 
+        {/* Cracked Games */}
+        <section className="mb-16">
+          <h2 className="mb-8 text-2xl font-bold text-white">Cracked Games</h2>
+          {isLoading ? (
+            <div className="flex h-64 items-center justify-center">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+            </div>
+          ) : (
+            <GameCarousel games={filteredGames.filter(game => game.crackStatus === 'Cracked')} />
+          )}
+        </section>
+
+        {/* Uncracked Games */}
+        <section className="mb-16">
+          <h2 className="mb-8 text-2xl font-bold text-white">Uncracked Games</h2>
+          {isLoading ? (
+            <div className="flex h-64 items-center justify-center">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+            </div>
+          ) : (
+            <GameCarousel games={filteredGames.filter(game => game.crackStatus === 'Not Cracked')} />
+          )}
+        </section>
+
+        {/* Upcoming Games */}
+        <section className="mb-16">
+          <h2 className="mb-8 text-2xl font-bold text-white">Upcoming Games</h2>
+          {isLoading ? (
+            <div className="flex h-64 items-center justify-center">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+            </div>
+          ) : (
+            <GameCarousel 
+              games={filteredGames.filter(game => {
+                const releaseDate = new Date(game.releaseDate);
+                const today = new Date();
+                return releaseDate > today;
+              })} 
+            />
+          )}
+        </section>
+
         {/* All Games */}
         <section>
           <h2 className="mb-8 text-2xl font-bold text-white">All Games</h2>
@@ -63,7 +106,7 @@ export default function Home() {
             <div className="flex h-64 items-center justify-center">
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
             </div>
-          ) : games.length === 0 ? (
+          ) : filteredGames.length === 0 ? (
             <div className="flex h-64 items-center justify-center">
               <p className="text-gray-400">No games found. Try a different search.</p>
             </div>

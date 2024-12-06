@@ -11,8 +11,8 @@ export interface Game {
   trailerUrl?: string
   crackStatus: 'Cracked' | 'Not Cracked' | 'Denuvo' | 'Online Only'
   category: string[]
-  rating?: number
-  metacritic?: number
+  rating: number | null
+  metacritic: number | null
 }
 
 interface GameStore {

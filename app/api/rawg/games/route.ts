@@ -36,14 +36,15 @@ export async function GET(request: NextRequest) {
       id: game.id.toString(),
       title: game.name,
       description: game.description_raw || 'No description available',
-      price: 59.99,
+      price: 59.99, // Default price
       platform: game.platforms?.map((p: any) => p.platform.name) || ['PC'],
       releaseDate: game.released || 'TBA',
       imageUrl: game.background_image || '/images/placeholder.jpg',
+      trailerUrl: game.clip?.clip || undefined,
       crackStatus: Math.random() > 0.5 ? 'Cracked' : 'Not Cracked', // Simulated crack status
       category: game.genres?.map((g: any) => g.name) || ['Action'],
-      rating: game.rating,
-      metacritic: game.metacritic,
+      rating: game.rating || null,
+      metacritic: game.metacritic || null,
     }))
 
     return NextResponse.json({
