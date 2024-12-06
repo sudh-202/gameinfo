@@ -1,0 +1,1 @@
+This directory contains game cover images. You should replace these with actual game cover images.
