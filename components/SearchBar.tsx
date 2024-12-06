@@ -1,31 +1,38 @@
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
-import { useGameStore } from '@/lib/store'
 import { useEffect } from 'react'
+import { useGameStore } from '@/lib/store'
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 
 export function SearchBar() {
-  const { games, searchTerm, selectedCategory, setFilteredGames, setSearchTerm } = useGameStore()
+  const searchTerm = useGameStore((state) => state.searchTerm)
+  const setSearchTerm = useGameStore((state) => state.setSearchTerm)
+  const fetchGamesData = useGameStore((state) => state.fetchGamesData)
 
+  // Fetch initial data when component mounts
   useEffect(() => {
-    const filtered = games.filter((game) => {
-      const matchesSearch = game.title.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesCategory = selectedCategory === 'All' || game.category.includes(selectedCategory)
-      return matchesSearch && matchesCategory
-    })
-    setFilteredGames(filtered)
-  }, [games, searchTerm, selectedCategory, setFilteredGames])
+    fetchGamesData()
+  }, [fetchGamesData])
+
+  // Debounced search effect
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      if (searchTerm.trim()) {
+        fetchGamesData(searchTerm)
+      }
+    }, 500)
+
+    return () => clearTimeout(debounceTimer)
+  }, [searchTerm, fetchGamesData])
 
   return (
-    <div className="relative mx-auto max-w-xl px-4">
-      <div className="relative">
-        <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
-        <input
-          type="text"
-          placeholder="Search games..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full rounded-full border border-gray-300 bg-white py-2 pl-10 pr-4 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500"
-        />
-      </div>
+    <div className="relative w-64">
+      <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+      <input
+        type="text"
+        placeholder="Search games..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full rounded bg-[#1a2432] py-2 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
+      />
     </div>
   )
 }

@@ -6,51 +6,71 @@ import { SearchBar } from '@/components/SearchBar'
 import { CategoryFilter } from '@/components/CategoryFilter'
 import { GameGrid } from '@/components/GameGrid'
 
-// Sample game data - in a real app, this would come from an API
-const sampleGames = [
-  {
-    id: '1',
-    title: 'Cyberpunk 2077',
-    description: 'An open-world, action-adventure RPG set in Night City',
-    price: 59.99,
-    platform: ['PC', 'PS5', 'Xbox Series X'],
-    releaseDate: '2020-12-10',
-    imageUrl: '/images/cyberpunk.jpg',
-    trailerUrl: 'https://youtube.com/watch?v=...',
-    crackStatus: 'Cracked' as const,
-    category: ['Action', 'RPG', 'Adventure'],
-  },
-  {
-    id: '2',
-    title: 'Elden Ring',
-    description: 'An action RPG developed by FromSoftware',
-    price: 59.99,
-    platform: ['PC', 'PS5', 'Xbox Series X'],
-    releaseDate: '2022-02-25',
-    imageUrl: '/images/elden-ring.jpg',
-    crackStatus: 'Denuvo' as const,
-    category: ['Action', 'RPG'],
-  },
-  // Add more sample games as needed
-]
-
 export default function Home() {
-  const setGames = useGameStore((state) => state.setGames)
+  const { fetchGamesData, isLoading, error, games } = useGameStore()
 
   useEffect(() => {
-    // In a real app, this would be an API call
-    setGames(sampleGames)
-  }, [setGames])
+    fetchGamesData()
+  }, [fetchGamesData])
+
+  if (error) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <p className="text-red-500">Error: {error}</p>
+      </div>
+    )
+  }
 
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto py-8">
-        <h1 className="mb-8 text-center text-4xl font-bold text-gray-900 dark:text-white">
-          Game Information Hub
-        </h1>
-        <SearchBar />
-        <CategoryFilter />
-        <GameGrid />
+    <main className="min-h-screen bg-gradient-to-b from-[#0f1724] to-[#1a2432]">
+      <div className="sticky top-0 z-50 border-b border-white/10 bg-[#0f1724]/80 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4">
+          <h1 className="text-2xl font-bold text-white">GameStatus</h1>
+          <div className="w-full max-w-xl">
+            <SearchBar />
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-7xl px-4 py-8">
+        {/* Featured Games */}
+        <section className="mb-16">
+          {isLoading ? (
+            <div className="flex h-64 items-center justify-center">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+            </div>
+          ) : (
+            <GameGrid featured limit={6} />
+          )}
+        </section>
+
+        {/* Latest Games */}
+        <section className="mb-16">
+          <h2 className="mb-8 text-2xl font-bold text-white">Latest Games</h2>
+          {isLoading ? (
+            <div className="flex h-64 items-center justify-center">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+            </div>
+          ) : (
+            <GameGrid limit={6} />
+          )}
+        </section>
+
+        {/* All Games */}
+        <section>
+          <h2 className="mb-8 text-2xl font-bold text-white">All Games</h2>
+          {isLoading ? (
+            <div className="flex h-64 items-center justify-center">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+            </div>
+          ) : games.length === 0 ? (
+            <div className="flex h-64 items-center justify-center">
+              <p className="text-gray-400">No games found. Try a different search.</p>
+            </div>
+          ) : (
+            <GameGrid />
+          )}
+        </section>
       </div>
     </main>
   )
