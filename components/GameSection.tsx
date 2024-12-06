@@ -1,51 +1,36 @@
 'use client'
 
-import { useEffect } from 'react'
 import { useGameStore } from '@/lib/store'
 import GameCarousel from '@/components/ui/GameCarousel'
+import { Game } from '@/lib/store'
 
 interface GameSectionProps {
   title: string
-  section: 'upcoming' | 'latest' | 'all'
-  statusLabel: string
-  statusColor: string
+  filterFn: (game: Game) => boolean
 }
 
-export default function GameSection({ title, section, statusLabel, statusColor }: GameSectionProps) {
-  const { games, loading, error, fetchGames } = useGameStore()
+export default function GameSection({ title, filterFn }: GameSectionProps) {
+  const { games, isLoading, error } = useGameStore()
 
-  useEffect(() => {
-    console.log(`Fetching games for section: ${section}`)
-    fetchGames(section)
-  }, [section, fetchGames])
-
-  useEffect(() => {
-    console.log(`Games for ${section}:`, games[section])
-  }, [games, section])
+  const filteredGames = games.filter(filterFn)
 
   return (
-    <section className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl md:text-3xl font-bold">{title}</h2>
-        <span className={`${statusColor} text-black px-3 py-1 rounded-full text-sm font-medium`}>
-          {statusLabel}
-        </span>
-      </div>
-
-      {loading[section] ? (
-        <div className="h-[300px] flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+    <section className="mb-16">
+      <h2 className="mb-8 text-2xl font-bold text-white">{title}</h2>
+      {isLoading ? (
+        <div className="flex h-64 items-center justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
         </div>
       ) : error ? (
-        <div className="h-[300px] flex items-center justify-center text-red-500">
-          {error}
+        <div className="rounded-lg bg-red-500/10 p-4 text-red-500">
+          <p>{error}</p>
         </div>
-      ) : games[section].length === 0 ? (
-        <div className="h-[300px] flex items-center justify-center text-gray-400">
-          No games found in this section.
+      ) : filteredGames.length === 0 ? (
+        <div className="rounded-lg bg-blue-500/10 p-4 text-blue-500">
+          <p>No games found in this section.</p>
         </div>
       ) : (
-        <GameCarousel games={games[section]} />
+        <GameCarousel games={filteredGames} />
       )}
     </section>
   )
