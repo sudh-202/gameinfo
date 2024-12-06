@@ -4,15 +4,15 @@ import { useEffect } from 'react';
 import { useGameStore } from '@/lib/store';
 import { SearchBar } from '@/components/SearchBar';
 import { CarouselSection } from '@/components/CarouselSection';
-import LoadingSpinner from '@/components/LoadingSpinner';
+// import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function Home() {
   const {
     fetchAllGames,
-    isLoading,
+    // isLoading,
     error,
     filteredGames,
-    searchTerm,
+    // searchTerm,
   } = useGameStore();
 
   useEffect(() => {

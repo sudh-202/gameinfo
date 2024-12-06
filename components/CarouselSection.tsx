@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 import Link from 'next/link';
-import { Game } from '@/types/game';
+// import { Game } from '@/types/game';
 import { GameCard } from '@/components/ui/GameCard';
 import LoadingSpinner from './LoadingSpinner';
 import { useGameStore } from '@/lib/store'; 

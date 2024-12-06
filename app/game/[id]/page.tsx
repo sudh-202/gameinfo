@@ -16,9 +16,11 @@ export default function GamePage({ params }: { params: { id: string } }) {
       try {
         const gameData = await fetchGameDetails(params.id)
         setGame(gameData)
-      } catch (err) {
-        setError('Failed to load game details')
-      } finally {
+      }
+      //  catch (err) {
+      //   setError('Failed to load game details')
+      // }
+       finally {
         setIsLoading(false)
       }
     }

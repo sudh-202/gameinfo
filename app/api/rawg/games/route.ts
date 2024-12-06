@@ -15,12 +15,12 @@ interface RAWGGame {
   metacritic?: number
 }
 
-interface RAWGResponse {
-  results: RAWGGame[]
-  count: number
-  next: string | null
-  previous: string | null
-}
+// interface RAWGResponse {
+//   results: RAWGGame[]
+//   count: number
+//   next: string | null
+//   previous: string | null
+// }
 
 export async function GET(request: NextRequest) {
   try {
