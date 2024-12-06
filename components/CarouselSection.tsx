@@ -5,14 +5,16 @@ import Link from 'next/link';
 import { Game } from '@/types/game';
 import { GameCard } from '@/components/ui/GameCard';
 import LoadingSpinner from './LoadingSpinner';
+import { useGameStore } from '@/lib/store'; 
 
 interface CarouselSectionProps {
   title: string;
-  games: Game[];
-  isLoading?: boolean;
+  type: 'upcoming' | 'cracked' | 'uncracked';
 }
 
-const CarouselSection = ({ title, games, isLoading = false }: CarouselSectionProps) => {
+export function CarouselSection({ title, type }: CarouselSectionProps) {
+  const games = useGameStore((state) => state.filteredGames(type));
+  const isLoading = useGameStore((state) => state.isLoading);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: 'left' | 'right') => {
@@ -74,5 +76,3 @@ const CarouselSection = ({ title, games, isLoading = false }: CarouselSectionPro
     </div>
   );
 };
-
-export default CarouselSection;

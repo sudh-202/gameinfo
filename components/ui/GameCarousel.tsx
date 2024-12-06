@@ -1,14 +1,15 @@
 'use client'
 
 import { useRef } from 'react'
-import { Game } from '@/lib/store'
+import { Game } from '@/types/game'
 import { GameCard } from './GameCard'
 
 interface GameCarouselProps {
   games: Game[]
+  isLoading?: boolean
 }
 
-export default function GameCarousel({ games }: GameCarouselProps) {
+export function GameCarousel({ games, isLoading = false }: GameCarouselProps) {
   const containerRef = useRef<HTMLDivElement>(null)
 
   const scroll = (direction: 'left' | 'right') => {
@@ -16,6 +17,14 @@ export default function GameCarousel({ games }: GameCarouselProps) {
 
     const scrollAmount = direction === 'left' ? -400 : 400
     containerRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' })
+  }
+
+  if (isLoading) {
+    return <div className="h-[300px] w-full animate-pulse bg-gray-800 rounded-lg" />
+  }
+
+  if (!games?.length) {
+    return <div className="h-[300px] w-full flex items-center justify-center text-gray-400">No games available</div>
   }
 
   return (

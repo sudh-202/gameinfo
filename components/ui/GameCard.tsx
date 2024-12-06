@@ -36,9 +36,9 @@ export function GameCard({ game, size = 'normal', featured = false }: GameCardPr
   return (
     <div 
       className={clsx(
-        'group relative overflow-hidden rounded-lg bg-[#0f1724] transition-all hover:scale-105',
+        'group relative overflow-hidden rounded-lg bg-[#0f1724] transition-all hover:scale-105 h-full flex flex-col',
         {
-          'col-span-1': size === 'normal',
+          'w-full aspect-square': size === 'normal',
           'col-span-2 row-span-2': size === 'large',
           'ring-2 ring-blue-500': featured
         }
@@ -46,8 +46,8 @@ export function GameCard({ game, size = 'normal', featured = false }: GameCardPr
     >
       {/* Image Container */}
       <div className={clsx(
-        'relative',
-        size === 'normal' ? 'aspect-[16/9]' : 'aspect-[16/10]'
+        'relative w-full',
+        size === 'normal' ? 'aspect-square' : 'aspect-[16/10]'
       )}>
         <Image
           src={imageUrl}
