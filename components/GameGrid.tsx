@@ -1,5 +1,5 @@
-import { useGameStore } from '../lib/store'
-import { GameCard } from './ui/GameCard'
+import { useGameStore } from '@/lib/store'
+import { GameCard } from '@/components/ui/GameCard'
 
 export function GameGrid() {
   const filteredGames = useGameStore((state) => state.filteredGames)

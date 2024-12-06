@@ -1,5 +1,5 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
-import { useGameStore } from '../lib/store'
+import { useGameStore } from '@/lib/store'
 import { useEffect } from 'react'
 
 export function SearchBar() {

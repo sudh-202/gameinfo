@@ -1,4 +1,4 @@
-import { useGameStore } from '../lib/store'
+import { useGameStore } from '@/lib/store'
 
 const categories = [
   'All',
