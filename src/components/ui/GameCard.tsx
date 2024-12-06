@@ -21,7 +21,7 @@ export function GameCard({
   crackStatus,
   releaseDate,
 }: GameCardProps) {
-  const [isHovered, setIsHovered] = useState(false)
+  const [, setIsHovered] = useState(false)
 
   return (
     <motion.div
