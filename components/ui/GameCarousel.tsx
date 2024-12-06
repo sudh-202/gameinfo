@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import { Game } from '@/types/game'
+import { Game } from '@/lib/store'
 import { GameCard } from './GameCard'
 
 interface GameCarouselProps {

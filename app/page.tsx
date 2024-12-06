@@ -7,7 +7,7 @@ import { GameGrid } from '@/components/GameGrid'
 import GameCarousel from '@/components/ui/GameCarousel'
 
 export default function Home() {
-  const { fetchGamesData, isLoading, error, filteredGames } = useGameStore()
+  const { fetchGamesData, isLoading, error, games } = useGameStore()
 
   useEffect(() => {
     fetchGamesData()
@@ -21,6 +21,15 @@ export default function Home() {
     )
   }
 
+  // Filter games by status
+  const crackedGames = games.filter(game => game.crackStatus === 'Cracked')
+  const uncrackedGames = games.filter(game => game.crackStatus === 'Not Cracked')
+  const upcomingGames = games.filter(game => {
+    const releaseDate = new Date(game.releaseDate)
+    const today = new Date()
+    return releaseDate > today
+  })
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0f1724] to-[#1a2432]">
       <div className="sticky top-0 z-50 border-b border-white/10 bg-[#0f1724]/80 backdrop-blur-xl">
@@ -33,29 +42,6 @@ export default function Home() {
       </div>
 
       <div className="mx-auto max-w-7xl px-4 py-8">
-        {/* Featured Games */}
-        <section className="mb-16">
-          {isLoading ? (
-            <div className="flex h-64 items-center justify-center">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
-            </div>
-          ) : (
-            <GameGrid featured limit={6} />
-          )}
-        </section>
-
-        {/* Latest Games */}
-        <section className="mb-16">
-          <h2 className="mb-8 text-2xl font-bold text-white">Latest Games</h2>
-          {isLoading ? (
-            <div className="flex h-64 items-center justify-center">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
-            </div>
-          ) : (
-            <GameGrid limit={6} />
-          )}
-        </section>
-
         {/* Cracked Games */}
         <section className="mb-16">
           <h2 className="mb-8 text-2xl font-bold text-white">Cracked Games</h2>
@@ -63,8 +49,12 @@ export default function Home() {
             <div className="flex h-64 items-center justify-center">
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
             </div>
+          ) : crackedGames.length > 0 ? (
+            <GameCarousel games={crackedGames} />
           ) : (
-            <GameCarousel games={filteredGames.filter(game => game.crackStatus === 'Cracked')} />
+            <div className="rounded-lg bg-blue-500/10 p-4 text-blue-500">
+              <p>No cracked games found.</p>
+            </div>
           )}
         </section>
 
@@ -75,8 +65,12 @@ export default function Home() {
             <div className="flex h-64 items-center justify-center">
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
             </div>
+          ) : uncrackedGames.length > 0 ? (
+            <GameCarousel games={uncrackedGames} />
           ) : (
-            <GameCarousel games={filteredGames.filter(game => game.crackStatus === 'Not Cracked')} />
+            <div className="rounded-lg bg-blue-500/10 p-4 text-blue-500">
+              <p>No uncracked games found.</p>
+            </div>
           )}
         </section>
 
@@ -87,14 +81,12 @@ export default function Home() {
             <div className="flex h-64 items-center justify-center">
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
             </div>
+          ) : upcomingGames.length > 0 ? (
+            <GameCarousel games={upcomingGames} />
           ) : (
-            <GameCarousel 
-              games={filteredGames.filter(game => {
-                const releaseDate = new Date(game.releaseDate);
-                const today = new Date();
-                return releaseDate > today;
-              })} 
-            />
+            <div className="rounded-lg bg-blue-500/10 p-4 text-blue-500">
+              <p>No upcoming games found.</p>
+            </div>
           )}
         </section>
 
@@ -105,7 +97,7 @@ export default function Home() {
             <div className="flex h-64 items-center justify-center">
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
             </div>
-          ) : filteredGames.length === 0 ? (
+          ) : games.length === 0 ? (
             <div className="flex h-64 items-center justify-center">
               <p className="text-gray-400">No games found. Try a different search.</p>
             </div>
